@@ -21,10 +21,10 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.home_view, name='/auth/login/'),
+    path('', views.redirect_to_preferences),
     path('admin/', admin.site.urls),
     path('auth/', include('users.urls')),
-    path('/', include('core.urls')),
+    path('', include('core.urls')),
 ]
 
 if settings.DEBUG:

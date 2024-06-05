@@ -16,7 +16,7 @@ def user_signup(request):
             return HttpResponse('Ja existe um usuario com esse mesmo nome')
         else:
             User.objects.create(username=username, email=email, password=password)
-            return HttpResponse('Cadastro feito com sucesso')
+            return redirect('/preferences')
 
 def user_login(request):
     if request.method=="GET":
@@ -28,7 +28,7 @@ def user_login(request):
         user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return redirect('/user/preferences')
+            return redirect('/preferences')
         else:
             return HttpResponse('Email ou senha errados')
 

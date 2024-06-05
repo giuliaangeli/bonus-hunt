@@ -1,5 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 
 
-def home_view(request):
-    return render(request, "pages/home.html", {})
+def redirect_to_preferences(request):
+    return redirect('preferences')
