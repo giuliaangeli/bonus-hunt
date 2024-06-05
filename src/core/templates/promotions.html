@@ -1,0 +1,41 @@
+{% extends "base.html" %} {% block content %}
+<div class="flex justify-center items-center h-screen">
+    <div class="shadow-md sm:rounded-lg w-9/12">
+      <table class="text-left rtl:text-right text-gray-500 w-full">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr class="flex justify-items-start text-gray-900 font-medium">
+            <th class="w-16 text-md px-8 py-4"></th>
+            <th class="w-4/12 text-md px-8 py-4">Empresa</th>
+            <th class="w-4/12 text-md py-4">Pontuação Clube</th>
+            <th class="w-4/12 text-md py-4">Pontuação Normal</th>
+          </tr>
+        </thead>
+        <tbody class="flex flex-col justify-items-start overflow-y-scroll bg-white" style="height: 50vh">
+          {% for score in scores_with_partners %}
+          <tr class="border-b bg-white transition duration-300 ease-in-out hover:bg-gray-100">
+            <td class="w-16 whitespace-nowrap px-6 py-4 text-sm font-light text-gray-900">
+              <a
+                class="hover:text-indigo-600"
+                href="{{ score.partner.link }}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {% heroicon_outline "arrow-top-right-on-square" %}
+              </a>
+            </td>
+            <th
+              scope="row"
+              class="w-4/12 whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900"
+            >
+              {{ score.partner.name }}
+            </th>
+            <td class="w-4/12 whitespace-nowrap py-4 text-sm">{{ score.score_club }}</td>
+            <td class="w-4/12 whitespace-nowrap py-4 text-sm">{{ score.score }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

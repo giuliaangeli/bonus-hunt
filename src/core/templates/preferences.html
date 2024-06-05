@@ -1,0 +1,82 @@
+{% extends "base.html" %} {% block content %}
+<div class="flex flex-col space-y-4 p-20">
+  <div class="flex items-center space-x-4">
+    <div class="w-3/5 space-y-4">
+      <h1 class="text-3xl font-semibold">
+        Quer desativar a notificações por email?
+      </h1>
+      <button
+        class="bg-indigo-600 hover:bg-indigo-600 text-white text-base font-thin py-2 px-4 rounded"
+        type="submit"
+        name="unsubscription"
+        value="#"
+      >
+        Desativar Notificações
+      </button>
+    </div>
+
+    <div
+      class="w-2/5 border-2 border-gray-100 flex-1 rounded-lg shadow-lg flex flex-col p-6"
+    >
+      <h1 class="text-lg">Modifique suas preferências</h1>
+      <h2 class="text-base font-thin">
+        Adicione as empresas que você quer receber notificações sobre promoções
+      </h2>
+      <div class="flex-grow overflow-scroll h-60 mt-4">
+        <ul>
+          {% for partner in followed_partners %}
+          <li>
+            <form method="post" style="display: flex">
+              {% csrf_token %}
+              <div class="flex items-center">
+                <button
+                  class="text-indigo-600 hover:text-indigo-400"
+                  type="submit"
+                  name="remove_partner"
+                  value="{{ partner.id }}"
+                >
+                  {% heroicon_outline "minus-circle" %}
+                </button>
+                <label
+                  for="username"
+                  class="block px-3 text-sm font-medium leading-9 text-gray-900"
+                  >{{ partner.name }}</label
+                >
+              </div>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+        <ul>
+          {% for partner in all_partners %}
+          <div>
+            {% if partner not in followed_partners %}
+            <li>
+              <form method="post" style="display: flex">
+                {% csrf_token %}
+                <div class="flex items-center">
+                  <button
+                    class="rounded-full h-6 w-6 bg-indigo-600 text-white hover:text-indigo-400"
+                    type="submit"
+                    name="add_partner"
+                    value="{{ partner.id }}"
+                  >
+                    {% heroicon_outline "plus-circle" %}
+                  </button>
+                  <label
+                    for="username"
+                    class="block px-3 text-sm font-medium leading-9 text-gray-900"
+                    >{{ partner.name }}</label
+                  >
+                </div>
+              </form>
+            </li>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
