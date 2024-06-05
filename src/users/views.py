@@ -19,6 +19,8 @@ def user_signup(request):
             return redirect('/preferences')
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('/preferences')
     if request.method=="GET":
         return render(request, 'login.html')
     else:
