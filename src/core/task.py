@@ -1,7 +1,13 @@
 from core.models import Partner, Score
+from django.contrib.auth.models import User
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import smtplib
+import email.message
 import time
+from dotenv import load_dotenv
+import os
+from django.utils import timezone
 
 def get_score_daily_job():
     driver = webdriver.Chrome()
@@ -65,3 +71,40 @@ def create_score(partner_id, score_club, score):
     Score.objects.create(partner_id=partner_id,
                          score_club=score_club,
                          score=score).id
+
+def send_promotions_notifications():
+    today = timezone.now().date()
+    scores_today = Score.objects.filter(created_at__date=today)
+    for user in User.objects.all:
+        followed_partners_ids = user.followed_partners.values_list('id', flat=True)
+        promotions_to_send = scores_today.filter(partner_id__in=followed_partners_ids).order_by('-score')
+        email_message = create_message(user.username, promotions_to_send)
+        send_email(email_message, user.email)
+
+def create_message(username, data):
+    email_body = f"""
+    <h3>Ei, {username}, essas são as promoções de hoje!</h3>
+    """
+    for score in data:
+        email_body += f"<p><b>{score.partner.name}</b> - {score.score}</p>"
+    return email_body
+
+def send_email(message, remittee):
+    # Load environment variables from .env file
+    load_dotenv()
+    msg = email.message.Message()
+    msg['Subject'] = "Veja as pontuações de hoje para suas lojas favoritas!"
+    msg['From'] = os.getenv('EMAIL')
+    msg['To'] = remittee
+    password = os.getenv('PASSWORD')
+    msg.add_header('Content-Type', 'text/html')
+    msg.set_payload(message)
+
+    s = smtplib.SMTP('smtp.gmail.com: 587')
+    s.starttls()
+    
+    # Login Credentials for sending the mail
+    s.login(msg['From'], password)
+    s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
+    print('Email enviado')
+
